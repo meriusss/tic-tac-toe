@@ -1,177 +1,164 @@
-// const test = () => {
-//     let name;
+let playerFactory = (name,symbol) => {
+    
+    const playerName = name;
 
-//     const setName = (input) => {
-//         name = input;
-//     }
+    const playerSymbol = symbol;
 
-//     const getName = () => {
-//         return name;
-//     }
+    return {playerName, playerSymbol}
+};
 
-//     return  { setName, getName };
-// };
-let playArea = document.querySelector(".play-area");
-let playButton = document.getElementById("play-button");
+let gameBoardFactory = () => {
+    const gameBoard = ["E","E", "E",
+                    "E","E", "E",
+                    "E","E", "E",];
 
-const gameBoardFactory = () => {
-
-    //Declare gameboard
-    //E means it's empty
-    const gameBoard = ["E", "E", "E", 
-                    "E", "E", "E", 
-                    "E", "E", "E"];
-
-    const changeGameBoard = (squareIndex, currentPlayerSymbol) => {
-        gameBoard.splice(squareIndex, 1, currentPlayerSymbol);
-    };
-
+    
     const getGameBoard = () => {
         return gameBoard;
     };
 
-    return {changeGameBoard, getGameBoard};   
-};
+    const updateGameBoard = (squareIndex, playerSymbol) => {
+        gameBoard.splice(squareIndex, 1, playerSymbol);
+    };
 
-const gameFactory = () => {
+    return {getGameBoard, updateGameBoard};
 
-    const createGame = () => {
-        let ticTacToeGrid = document.createElement("div");
-        ticTacToeGrid.classList.add("tic-tac-toe-grid");
+}
+
+let gameFactory = () => {
+
+    const generateSquares = () => {
+
+        const playArea = document.querySelector(".play-area");
+        const squareGrid = document.createElement("div");
+        squareGrid.classList.add("tic-tac-toe-grid");
+
+        for (let i = 0; i < 9; i++){
+            let square = document.createElement("div");
+            let squareImage = document.createElement("img");
+            square.classList.add("tic-tac-toe-square");
+            square.append(squareImage);
+            squareGrid.append(square);
+        }
+        playArea.append(squareGrid);
+    };
+
+    const updateSquares = (gameBoard) => {
+        let squares = document.getElementsByClassName("tic-tac-toe-square");
+        for (let i = 0; i < 9; i++){
+            if (gameBoard.getGameBoard()[i] == "X"){
+                squares[i].firstChild.src = "svgs/x.svg";
+            }
+            else if (gameBoard.getGameBoard()[i] == "O"){
+                squares[i].firstChild.src = "svgs/o.svg";
+            }
+        }
+    };
+
+    const alternatePlayer = (currentPlayer, playerOne, playerTwo) => {
+        if (currentPlayer.playerSymbol == playerOne.playerSymbol){
+            return playerTwo;
+        }
+
+        else if (currentPlayer.playerSymbol == playerTwo.playerSymbol){
+            return playerOne;
+        }
+    };
+
+    const checkForWin = (gameBoard,squares,player) => {
+
+        for (let i = 0; i < 9; i++){
+            if ((gameBoard.getGameBoard()[i] == player.playerSymbol && gameBoard.getGameBoard()[i+1] == player.playerSymbol && gameBoard.getGameBoard()[i+2] == player.playerSymbol) && (([3,12,21].includes(3*i+3)))){
+                squares[i].style.backgroundColor = "#7CA183";
+                squares[i+1].style.backgroundColor = "#7CA183";
+                squares[i+2].style.backgroundColor = "#7CA183";
+                return player;
+                }
+            else if ((gameBoard.getGameBoard()[i] == player.playerSymbol && gameBoard.getGameBoard()[i+3] == player.playerSymbol && gameBoard.getGameBoard()[i+6] == player.playerSymbol) && ([9,12,15].includes(3*i+9))){
+                squares[i].style.backgroundColor = "#7CA183";
+                squares[i+3].style.backgroundColor = "#7CA183";
+                squares[i+6].style.backgroundColor = "#7CA183";
+                return player;
+                }
+            else if (gameBoard.getGameBoard()[i] == player.playerSymbol && gameBoard.getGameBoard()[i+4] == player.playerSymbol && gameBoard.getGameBoard()[i+8] == player.playerSymbol){
+                squares[i].style.backgroundColor = "#7CA183";
+                squares[i+4].style.backgroundColor = "#7CA183";
+                squares[i+8].style.backgroundColor = "#7CA183";
+                return player;
+                }
+            else if ((gameBoard.getGameBoard()[i+2] == player.playerSymbol && gameBoard.getGameBoard()[i+4] == player.playerSymbol && gameBoard.getGameBoard()[i+6] == player.playerSymbol) && (3*i+12 == 12)){
+                squares[i+2].style.backgroundColor = "#7CA183";
+                squares[i+4].style.backgroundColor = "#7CA183";
+                squares[i+6].style.backgroundColor = "#7CA183";
+                return player;
+                }
+            }
+
+    };
+
+    const gameOver = (winner) => {
+        let playArea = document.querySelector(".play-area");
         
-        for(let i = 0; i < 9; i++){
-            let ticTacToeSquare = document.createElement("div");
-            let ticTacToeImage = document.createElement("img");
-            ticTacToeSquare.classList.add("tic-tac-toe-square");
-            ticTacToeSquare.append(ticTacToeImage);
-            ticTacToeGrid.append(ticTacToeSquare);
+        let winnerText = document.createElement("p");
+        winnerText.textContent = winner.playerName + " won the round!";
+        
+        let playButton = document.createElement("button");
+        playButton.id = "play-button";
+        playButton.textContent = "PLAY AGAIN?";
+        playButton.style.marginTop = "10px"
+        playButton.addEventListener('click', ()=>{
+            playArea.innerHTML = "";
+            playButtonFunction(playButton);
+        });
+
+        if (winner == 1){
+            winnerText.textContent = "It's a draw!";
         }
 
-        playArea.append(ticTacToeGrid);
+        playArea.insertBefore(winnerText,playArea.firstChild);
+        playArea.append(playButton);
 
-    };
-
-    const updateGame = (gameboard) => {
-        let gameSquares = document.getElementsByClassName("tic-tac-toe-square");
-        for(let i = 0; i < gameSquares.length; i++){
-            if (gameboard.getGameBoard()[i] == "X"){
-                gameSquares[i].firstChild.src = "svgs/x.svg";
-            }
-            else if (gameboard.getGameBoard()[i] == "O"){
-                gameSquares[i].firstChild.src = "svgs/o.svg";
-            }
-        }
-    };
+    }
 
 
-    const handlePlayerInputs = (game, gameBoard) => {
-        let gameSquares = document.getElementsByClassName("tic-tac-toe-square");
-        let currentPlayerSymbol = "X"
-        for(let i = 0; i < gameSquares.length; i++){
-            gameSquares[i].addEventListener('click', function listener (){
-                if(gameBoard.getGameBoard()[i] == "E"){
-                    let isWon = checkForWinner(gameBoard,gameSquares);
-                    if (isWon != 1 && isWon != 2){
-                        gameBoard.changeGameBoard(i,currentPlayerSymbol);
-                        currentPlayerSymbol = alternatePlayer(currentPlayerSymbol);
-                        checkForWinner(gameBoard,gameSquares);
-                        game.updateGame(gameBoard);
-                    }
+    const play = (gameBoard,playerOne,playerTwo) => {
+        let squares = document.getElementsByClassName("tic-tac-toe-square");
+        let currentPlayer = playerOne;
+        let winner = 0;
 
-            }
+        for (let i = 0; i < 9; i++){
+            squares[i].addEventListener('click', function clickSquares() {
+                if (gameBoard.getGameBoard()[i] == "E" && (winner != playerOne && winner != playerTwo)){
+                    gameBoard.updateGameBoard(i, currentPlayer.playerSymbol);
+                    updateSquares(gameBoard);
+                    winner = checkForWin(gameBoard,squares,currentPlayer);
+                    currentPlayer = alternatePlayer(currentPlayer,playerOne,playerTwo);
+                }
+                if (winner == playerOne || winner == playerTwo){
+                    gameOver(winner);
+                }
+                if (winner = 0 || gameBoard.getGameBoard().includes("E") == false){
+                    gameOver(winner);
+                }
+                
             })
         }
-    }
-    
-    const alternatePlayer = (currentPlayerSymbol) => {
-        if (currentPlayerSymbol == "X") {
-            return "O";
-        }
-        else if (currentPlayerSymbol == "O"){
-            return "X";
-        }
-    }
+    };
 
-    const checkForWinner = (gameboard,squares) => {
-        for(let i = 0; i < 9; i++){
-            if ((gameboard.getGameBoard()[i] == "X" && gameboard.getGameBoard()[i+1] == "X" && gameboard.getGameBoard()[i+2] == "X") && (([3,12,21].includes(3*i+3)))){
-                console.log("X wins");
-                squares[i].style.backgroundColor = "#7CA183";
-                squares[i+1].style.backgroundColor = "#7CA183";
-                squares[i+2].style.backgroundColor = "#7CA183";
-                return 1;
-            }
-            else if ((gameboard.getGameBoard()[i] == "O" && gameboard.getGameBoard()[i+1] == "O" && gameboard.getGameBoard()[i+2] == "O") && (([3,12,21].includes(3*i+3)))){
-                console.log("O wins");
-                squares[i].style.backgroundColor = "#7CA183";
-                squares[i+1].style.backgroundColor = "#7CA183";
-                squares[i+2].style.backgroundColor = "#7CA183";
-                return 2;
-            }
+    return {generateSquares, updateSquares, play};
+}
 
-            else if ((gameboard.getGameBoard()[i] == "X" && gameboard.getGameBoard()[i+3] == "X" && gameboard.getGameBoard()[i+6] == "X") && (([9,12,15].includes(3*i+9)))){
-                console.log("X wins");
-                squares[i].style.backgroundColor = "#7CA183";
-                squares[i+3].style.backgroundColor = "#7CA183";
-                squares[i+6].style.backgroundColor = "#7CA183";
-                return 1;
-            }
-
-            else if ((gameboard.getGameBoard()[i] == "O" && gameboard.getGameBoard()[i+3] == "O" && gameboard.getGameBoard()[i+6] == "O") && (([9,12,15].includes(3*i+9)))){
-                console.log("O wins");
-                squares[i].style.backgroundColor = "#7CA183";
-                squares[i+3].style.backgroundColor = "#7CA183";
-                squares[i+6].style.backgroundColor = "#7CA183";
-                return 2;
-            }
-
-            else if (gameboard.getGameBoard()[0] == "X" && gameboard.getGameBoard()[4] == "X" && gameboard.getGameBoard()[8] == "X") {
-                console.log("X wins");
-                squares[0].style.backgroundColor = "#7CA183";
-                squares[4].style.backgroundColor = "#7CA183";
-                squares[8].style.backgroundColor = "#7CA183";
-                return 1;
-            }
-
-            else if (gameboard.getGameBoard()[0] == "O" && gameboard.getGameBoard()[4] == "O" && gameboard.getGameBoard()[8] == "O") {
-                console.log("O wins");
-                squares[0].style.backgroundColor = "#7CA183";
-                squares[4].style.backgroundColor = "#7CA183";
-                squares[8].style.backgroundColor = "#7CA183";
-                return 2;
-            }
-
-            
-
-            else if (gameboard.getGameBoard()[2] == "X" && gameboard.getGameBoard()[4] == "X" && gameboard.getGameBoard()[6] == "X") {
-                console.log("X wins");
-                squares[2].style.backgroundColor = "#7CA183";
-                squares[4].style.backgroundColor = "#7CA183";
-                squares[6].style.backgroundColor = "#7CA183";
-                return 1;
-            }
-
-            else if (gameboard.getGameBoard()[2] == "O" && gameboard.getGameBoard()[4] == "O" && gameboard.getGameBoard()[6] == "O") {
-                console.log("O wins");
-                squares[2].style.backgroundColor = "#7CA183";
-                squares[4].style.backgroundColor = "#7CA183";
-                squares[6].style.backgroundColor = "#7CA183";
-                return 2;
-            }
-            
-            
-        }
-    }
-
-
-    return {createGame, updateGame, handlePlayerInputs};
-};
-
-
-playButton.addEventListener('click', (e)=> {
+function playButtonFunction (playButton) {
     playButton.remove();
-    let game = gameFactory();
-    let gameboard = gameBoardFactory();
-    game.createGame();
-    game.handlePlayerInputs(game,gameboard);
-});
+    playerOne = playerFactory("one", "X");
+    playerTwo = playerFactory("two", "O");
+    gameBoard = gameBoardFactory();
+    game = gameFactory();
+    game.generateSquares();
+    game.play(gameBoard,playerOne,playerTwo);
+}
+
+let playButton = document.getElementById("play-button");
+playButton.addEventListener('click', ()=>{
+    playButtonFunction(playButton);
+})
