@@ -109,6 +109,22 @@ const gameFactory = () => {
                 return 2;
             }
 
+            else if ((gameboard.getGameBoard()[i] == "X" && gameboard.getGameBoard()[i+3] == "X" && gameboard.getGameBoard()[i+6] == "X") && (([9,12,15].includes(3*i+9)))){
+                console.log("X wins");
+                squares[i].style.backgroundColor = "#7CA183";
+                squares[i+3].style.backgroundColor = "#7CA183";
+                squares[i+6].style.backgroundColor = "#7CA183";
+                return 1;
+            }
+
+            else if ((gameboard.getGameBoard()[i] == "O" && gameboard.getGameBoard()[i+3] == "O" && gameboard.getGameBoard()[i+6] == "O") && (([9,12,15].includes(3*i+9)))){
+                console.log("O wins");
+                squares[i].style.backgroundColor = "#7CA183";
+                squares[i+3].style.backgroundColor = "#7CA183";
+                squares[i+6].style.backgroundColor = "#7CA183";
+                return 2;
+            }
+
             else if (gameboard.getGameBoard()[0] == "X" && gameboard.getGameBoard()[4] == "X" && gameboard.getGameBoard()[8] == "X") {
                 console.log("X wins");
                 squares[0].style.backgroundColor = "#7CA183";
@@ -124,6 +140,8 @@ const gameFactory = () => {
                 squares[8].style.backgroundColor = "#7CA183";
                 return 2;
             }
+
+            
 
             else if (gameboard.getGameBoard()[2] == "X" && gameboard.getGameBoard()[4] == "X" && gameboard.getGameBoard()[6] == "X") {
                 console.log("X wins");
