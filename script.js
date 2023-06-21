@@ -137,7 +137,7 @@ let gameFactory = () => {
                 if (winner == playerOne || winner == playerTwo){
                     gameOver(winner);
                 }
-                if (winner = 0 || gameBoard.getGameBoard().includes("E") == false){
+                if (winner == 0 || gameBoard.getGameBoard().includes("E") == false){
                     gameOver(winner);
                 }
                 
