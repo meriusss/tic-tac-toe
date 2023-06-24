@@ -96,18 +96,25 @@ let gameFactory = () => {
 
     };
 
-    const gameOver = (winner) => {
+    const gameOver = (winner, squares) => {
+        for (let i = 0; i < 9; i++){
+            squares[i].replaceWith(squares[i].cloneNode(true));
+        }
+
         let playArea = document.querySelector(".play-area");
         
         let winnerText = document.createElement("p");
         winnerText.textContent = winner.playerName + " won the round!";
+
+        let squareGrid = document.querySelector(".tic-tac-toe-grid");
         
         let playButton = document.createElement("button");
         playButton.id = "play-button";
         playButton.textContent = "PLAY AGAIN?";
         playButton.style.marginTop = "10px"
         playButton.addEventListener('click', ()=>{
-            playArea.innerHTML = "";
+            winnerText.remove();
+            squareGrid.remove();
             playButtonFunction(playButton);
         });
 
@@ -135,23 +142,43 @@ let gameFactory = () => {
                     currentPlayer = alternatePlayer(currentPlayer,playerOne,playerTwo);
                 }
                 if (winner == playerOne || winner == playerTwo){
-                    gameOver(winner);
+                    gameOver(winner, squares);
                 }
-                if (winner == 0 || gameBoard.getGameBoard().includes("E") == false){
-                    gameOver(winner);
+                if (winner == undefined && gameBoard.getGameBoard().includes("E") == false){
+                    winner = 1;
+                    gameOver(winner, squares);
                 }
                 
             })
         }
     };
 
-    return {generateSquares, updateSquares, play};
+    return {generateSquares, play};
 }
 
 function playButtonFunction (playButton) {
     playButton.remove();
-    playerOne = playerFactory("one", "X");
-    playerTwo = playerFactory("two", "O");
+
+    let playerOneName = document.getElementById("player-one-name");
+    let playerTwoName = document.getElementById("player-two-name");
+    let playerNamesContainer = document.querySelector(".player-names");
+    let playerOne = playerFactory("Player one", "X");
+    let playerTwo = playerFactory("Player two", "O");
+
+
+    if (playerOneName.value != ""){
+        playerOne = playerFactory(playerOneName.value, "X");
+    };
+
+    if (playerTwoName.value != ""){
+        playerTwo = playerFactory(playerTwoName.value, "O");
+    };
+
+    
+
+    playerNamesContainer.style.visibility = "hidden";
+    playerNamesContainer.style.height = "0";
+    playerNamesContainer.style.width = "0";
     gameBoard = gameBoardFactory();
     game = gameFactory();
     game.generateSquares();

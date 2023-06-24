@@ -78,6 +78,30 @@ table {
 	text-align: center;
 }
 
+.player-names {
+	display: flex;
+	flex-direction: column;
+	gap: 10%;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	margin: 1% 0;
+}
+
+#player-one-name, #player-two-name {
+	border: 2px solid black;
+	background-color: #fff0db;
+	color: black;
+	padding: 0 10px;
+	width: calc(100%-10px);
+	font-family: "Josefin Sans";
+	font-weight: bold;
+	text-align: center;
+	height: 50px;
+	border-radius: 25px;
+	font-size: 25px;
+}
+
 #play-button {
 	height: 200px;
 	width: 200px;
